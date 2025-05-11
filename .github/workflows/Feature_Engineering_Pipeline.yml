@@ -13,10 +13,10 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v2
       with:
         python-version: '3.9'
         
@@ -30,10 +30,10 @@ jobs:
         HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
       run: python feature_engineering.py
       
+    # Optional: Use v1 of upload-artifact which is more stable
     - name: Archive logs
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v1
       with:
         name: feature-engineering-logs
         path: logs/
-        retention-days: 7
