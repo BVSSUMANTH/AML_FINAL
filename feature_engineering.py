@@ -4,14 +4,14 @@ import hopsworks
 from datetime import datetime
 
 def main():
-    # ✅ Connect to Hopsworks
+    #  Connect to Hopsworks
     project = hopsworks.login(
         project="CitiBike_Final",     # << your project name
         api_key_value="NoSnqjvqruam2G2e.of4xXCy3fxpjkmgdpJflgRoTRbWkTsXdTM3hlQMGlyU37sXiqgLgGbSyBh57edxq"
     )
     fs = project.get_feature_store()
 
-    # ✅ Load raw dataset (replace this with your real dataset code)
+    #  Load raw dataset (replace this with your real dataset code)
     # For demo I just generate dummy data
     stations = ["8 Ave & W 31 St", "Lafayette St & E 8 St", "Pershing Square North"]
     dates = pd.date_range(end=datetime.today().date(), periods=60)
@@ -30,9 +30,9 @@ def main():
             })
 
     df = pd.DataFrame(data)
-    print(f"✅ Loaded dataset: {df.shape}")
+    print(f" Loaded dataset: {df.shape}")
 
-    # ✅ Create (or get) feature group in Hopsworks
+    #  Create (or get) feature group in Hopsworks
     fg = fs.get_or_create_feature_group(
         name="citibike_ts_features",           # << this must match your frontend
         version=1,
@@ -41,9 +41,9 @@ def main():
         event_time="date"
     )
 
-    # ✅ Insert data into feature store
+    #  Insert data into feature store
     fg.insert(df)
-    print(f"✅ Data inserted to Hopsworks: {df.shape[0]} rows")
+    print(f" Data inserted to Hopsworks: {df.shape[0]} rows")
 
 if __name__ == "__main__":
     main()
