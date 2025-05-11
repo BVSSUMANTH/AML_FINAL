@@ -44,7 +44,7 @@ jobs:
       run: python run_inference.py --forecast-days $FORECAST_DAYS
       
     - name: Archive prediction results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: predictions
         path: predictions/
@@ -52,7 +52,7 @@ jobs:
         
     - name: Archive logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: inference-logs
         path: logs/
