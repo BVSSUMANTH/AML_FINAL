@@ -4,31 +4,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  model_training:
+  train_model:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
       
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9'
-          
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          
-      - name: Debug environment
-        run: |
-          echo "Listing directory content:"
-          ls -la
-          echo "Python version:"
-          python --version
-          echo "Pip packages:"
-          pip list
-          
-      - name: Run model training
-        env:
-          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-        run: python train_model.py
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy scikit-learn hopsworks joblib
+        
+    - name: Debug environment
+      run: |
+        echo "Listing directory content:"
+        ls -la
+        echo "Python version:"
+        python --version
+        echo "Pip packages:"
+        pip list
+        
+    - name: Run simplified model training
+      env:
+        HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+      run: python simplified_train_model.py
