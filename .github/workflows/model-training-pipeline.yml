@@ -1,4 +1,4 @@
-name: Basic Model Registry
+name: Model Pipeline
 
 on:
   workflow_dispatch:
