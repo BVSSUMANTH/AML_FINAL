@@ -25,10 +25,10 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
       
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v2
       with:
         python-version: '3.9'
         
@@ -44,16 +44,14 @@ jobs:
       run: python run_inference.py --forecast-days $FORECAST_DAYS
       
     - name: Archive prediction results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v1
       with:
         name: predictions
-        path: predictions/
-        retention-days: 30
+        path: predictions
         
     - name: Archive logs
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v1
       with:
         name: inference-logs
-        path: logs/
-        retention-days: 7
+        path: logs
