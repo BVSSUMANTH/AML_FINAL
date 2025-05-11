@@ -4,6 +4,7 @@ numpy>=1.20.0
 plotly>=5.5.0
 hopsworks[python]>=3.0.0
 hsml>=3.0.0
+pyarrow>=7.0.0
 mlflow>=1.20.0
 scikit-learn>=1.0.0
 lightgbm>=3.3.0
