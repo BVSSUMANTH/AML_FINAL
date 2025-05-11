@@ -38,13 +38,16 @@ def run_training():
     
     # Register to Model Registry
     mr = project.get_model_registry()
-    model_registry_obj = mr.python.create_model(
+    
+    # Create the model package with metadata
+    model_package = mr.python.create_model(
         name="citibike_model",
         metrics={"mae": mae, "rmse": rmse},
-        model_dir=model_dir,
         description="Baseline Dummy Model for CitiBike prediction"
     )
-    model_registry_obj.save()
+    
+    # Save the model file to the model package
+    model_package.save(model_path)
     
     print("Model saved to Hopsworks Model Registry!")
 
