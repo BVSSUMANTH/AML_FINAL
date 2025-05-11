@@ -1,39 +1,34 @@
-name: Feature Engineering Pipeline
+name: Feature Engineering
 
 on:
-  schedule:
-    # Run daily at midnight UTC
-    - cron: '0 0 * * *'
   workflow_dispatch:
-    # Allow manual triggering
 
 jobs:
   feature_engineering:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v2
       
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        
-    - name: Run feature engineering
-      env:
-        HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-      run: python feature_engineering.py
-      
-    # Optional: Use v1 of upload-artifact which is more stable
-    - name: Archive logs
-      if: always()
-      uses: actions/upload-artifact@v1
-      with:
-        name: feature-engineering-logs
-        path: logs/
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Debug environment
+        run: |
+          echo "Listing directory content:"
+          ls -la
+          echo "Python version:"
+          python --version
+          echo "Pip packages:"
+          pip list
+          
+      - name: Run feature engineering
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+        run: python feature_engineering.py
