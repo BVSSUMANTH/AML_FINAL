@@ -32,7 +32,7 @@ jobs:
       run: python train_model.py
       
     - name: Archive model artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: model-artifacts
         path: |
@@ -42,7 +42,7 @@ jobs:
         
     - name: Archive logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: model-training-logs
         path: logs/
