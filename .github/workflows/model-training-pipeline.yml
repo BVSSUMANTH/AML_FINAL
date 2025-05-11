@@ -33,4 +33,4 @@ jobs:
     - name: Run simplified model training
       env:
         HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-      run: python simplified_train_model.py
+      run: python train_model.py
