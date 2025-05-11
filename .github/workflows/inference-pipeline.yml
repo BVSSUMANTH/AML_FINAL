@@ -1,11 +1,7 @@
-name: Inference Pipeline
+name: Inference
 
 on:
-  schedule:
-    # Run daily at 6am UTC
-    - cron: '0 6 * * *'
   workflow_dispatch:
-    # Allow manual triggering
     inputs:
       forecast_days:
         description: 'Number of days to forecast'
@@ -20,38 +16,32 @@ on:
         - '30'
 
 jobs:
-  run_inference:
+  inference:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v2
       
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        
-    - name: Run inference
-      env:
-        HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-        FORECAST_DAYS: ${{ github.event.inputs.forecast_days || '7' }}
-      run: python run_inference.py --forecast-days $FORECAST_DAYS
-      
-    - name: Archive prediction results
-      uses: actions/upload-artifact@v1
-      with:
-        name: predictions
-        path: predictions
-        
-    - name: Archive logs
-      if: always()
-      uses: actions/upload-artifact@v1
-      with:
-        name: inference-logs
-        path: logs
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Debug environment
+        run: |
+          echo "Listing directory content:"
+          ls -la
+          echo "Python version:"
+          python --version
+          echo "Pip packages:"
+          pip list
+          
+      - name: Run inference
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+          FORECAST_DAYS: ${{ github.event.inputs.forecast_days }}
+        run: python run_inference.py --forecast-days $FORECAST_DAYS
