@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Simplified Citibike Model Training Pipeline
+Corrected Citibike Model Training Pipeline
 This script retrieves feature data from Hopsworks, trains a simple model, and registers it.
 """
 
@@ -104,7 +104,7 @@ def train_model(X_train, y_train, X_test, y_test):
 
 def register_model(project, model_path, model_name, mae):
     """
-    Register the model in Hopsworks Model Registry.
+    Register the model in Hopsworks Model Registry (corrected version).
     """
     logger.info(f"Registering model to Hopsworks Model Registry...")
     
@@ -113,20 +113,30 @@ def register_model(project, model_path, model_name, mae):
         mr = project.get_model_registry()
         
         # Create model in registry
-        model = mr.python.create_model(
+        model_instance = mr.sklearn.create_model(
             name=model_name,
+            version=1,
             metrics={"mae": mae},
             description=f"CitiBike trip prediction model (MAE: {mae:.2f})"
         )
         
-        # Upload the model file
-        model.save(model_path)
+        # Save the model to the registry
+        model_instance.save(model_path)
         
         logger.info(f"Successfully registered model: {model_name}")
-        return model
+        return model_instance
     
     except Exception as e:
         logger.exception(f"Error registering model: {e}")
+        # More specific error handling based on error type
+        if "already exists" in str(e):
+            logger.info("Model already exists. Trying to get existing model...")
+            try:
+                model_instance = mr.get_model(name=model_name, version=1)
+                logger.info(f"Retrieved existing model: {model_name}")
+                return model_instance
+            except Exception as e2:
+                logger.exception(f"Error retrieving existing model: {e2}")
         return None
 
 def deploy_model(project, model_name):
@@ -145,7 +155,7 @@ def deploy_model(project, model_name):
         # Get or create serving instance
         serving = project.get_model_serving()
         
-        # Deploy the model
+        # Deploy the model - using the correct method from documentation
         deployment = serving.create_deployment(
             name=model_name,
             model=model
@@ -156,13 +166,16 @@ def deploy_model(project, model_name):
     
     except Exception as e:
         logger.exception(f"Error deploying model: {e}")
+        if "already exists" in str(e):
+            logger.info("Deployment already exists.")
+            return True
         return False
 
 def main():
     """
     Main function to execute the model training pipeline.
     """
-    logger.info("Starting simplified CitiBike model training pipeline")
+    logger.info("Starting corrected CitiBike model training pipeline")
     
     try:
         # Load data from Hopsworks
@@ -171,6 +184,10 @@ def main():
         if df is None or project is None:
             logger.error("Failed to load data from Hopsworks. Exiting.")
             return
+        
+        # Print project type and available methods to debug
+        logger.info(f"Project type: {type(project)}")
+        logger.info(f"Project methods: {dir(project)}")
         
         # Prepare features and target
         logger.info("Preparing features and target...")
@@ -187,6 +204,11 @@ def main():
         
         # Train model
         model, mae, model_path = train_model(X_train, y_train, X_test, y_test)
+        
+        # Get model registry to debug
+        mr = project.get_model_registry()
+        logger.info(f"Model registry type: {type(mr)}")
+        logger.info(f"Model registry methods: {dir(mr)}")
         
         # Register model in Hopsworks
         model_name = "citibike_trip_predictor"
